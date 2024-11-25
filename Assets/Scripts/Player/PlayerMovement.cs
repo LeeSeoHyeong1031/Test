@@ -6,39 +6,40 @@ using UnityEngine.XR;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
-	public float moveSpeed;
-	public float dashSpeed;
+    public float moveSpeed;
+    public float dashSpeed;
 
-	private Vector2 inputDir;
-	private Rigidbody rb;
+    public Vector2 inputDir { get; private set; }
+    private Rigidbody rb;
 
-	private void Awake()
-	{
-		rb = GetComponent<Rigidbody>();
-	}
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
-	private void Update()
-	{
-		inputDir.x = Input.GetAxis("Horizontal");
-		inputDir.y = Input.GetAxis("Vertical");
-		inputDir = inputDir.normalized;
+    private void Update()
+    {
+        float x = Input.GetAxis("Horizontal");
+        float y = Input.GetAxis("Vertical");
+        inputDir = new Vector2(x, y);
+        inputDir = inputDir.normalized;
 
-		Move();
+        Move();
 
-		if (Input.GetKeyDown(KeyCode.LeftShift))
-		{
-			Dash();
-		}
-	}
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Dash();
+        }
+    }
 
-	private void Move()
-	{
-		Vector3 actualMove = new Vector3(inputDir.x, 0, inputDir.y);
-		rb.MovePosition(rb.position + actualMove * moveSpeed * Time.deltaTime);
-	}
-	private void Dash()
-	{
-		Vector3 actualDash = rb.transform.forward * dashSpeed;
-		rb.AddForce(actualDash, ForceMode.VelocityChange);
-	}
+    private void Move()
+    {
+        Vector3 actualMove = new Vector3(inputDir.x, 0, inputDir.y);
+        rb.MovePosition(rb.position + actualMove * moveSpeed * Time.deltaTime);
+    }
+    public void Dash()
+    {
+        Vector3 actualDash = rb.transform.forward * dashSpeed;
+        rb.AddForce(actualDash, ForceMode.VelocityChange);
+    }
 }
