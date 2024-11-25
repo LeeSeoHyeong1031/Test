@@ -1,50 +1,59 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    public StateMachine playerStateMachine;
-    public PlayerMovement playerMovement;
-    public Weapon _curWeopon;
-    public bool isLeftClick;
-    public bool isRightClick;
+	public StateMachine playerStateMachine;
+	public PlayerMovement playerMovement;
+	public Weapon _curWeopon;
+	public bool isLeftMouseClick;
+	public bool isRightMouseClick;
 
-    private void Awake()
-    {
-        Init();
-    }
+	private void Awake()
+	{
+		Init();
+	}
 
-    private void Start()
-    {
-        playerStateMachine.Init(playerStateMachine.idleState);
-    }
+	private void OnEnable()
+	{
+		PlayerInputManager.Instance.OnDashPressed += playerMovement.Dash;
+	}
 
-    private void Update()
-    {
-        playerStateMachine.OnUpdate();
+	private void Start()
+	{
+		playerStateMachine.Init(playerStateMachine.idleState);
+	}
 
-        ////기본 공격
-        //if (Input.GetMouseButtonDown(0)) _curWeopon.CanNormalAttack();
+	private void Update()
+	{
+		playerStateMachine.OnUpdate();
 
-        ////스킬 공격
-        //if (Input.GetMouseButtonDown(1)) _curWeopon.CanSkillAttack();
+		if (playerStateMachine.CurState != playerStateMachine.attackState)
+		{
+			playerMovement.Move(PlayerInputManager.Instance.inputMoveDir);
+		}
 
+		//기본 공격
+		if (Input.GetMouseButtonDown(0)) isLeftMouseClick = true;
+		else isLeftMouseClick = false;
 
-        //기본 공격
-        if (Input.GetMouseButtonDown(0)) isLeftClick = true;
-        else isLeftClick = false;
+		//스킬 공격
+		if (Input.GetMouseButtonDown(1)) isRightMouseClick = true;
+		else isRightMouseClick = false;
 
-        //스킬 공격
-        if (Input.GetMouseButtonDown(1)) isRightClick = true;
-        else isRightClick = false;
+	}
 
-    }
+	private void Init()
+	{
+		playerStateMachine = new StateMachine(this);
+		playerMovement = GetComponent<PlayerMovement>();
+		_curWeopon = GetComponentInChildren<Weapon>();
+	}
 
-    private void Init()
-    {
-        playerStateMachine = new StateMachine(this);
-        playerMovement = GetComponent<PlayerMovement>();
-        _curWeopon = GetComponentInChildren<Weapon>();
-    }
+	private void OnDestroy()
+	{
+		PlayerInputManager.Instance.OnDashPressed -= playerMovement.Dash;
+	}
 }

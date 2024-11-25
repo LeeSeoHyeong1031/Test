@@ -4,39 +4,36 @@ using UnityEngine;
 
 public class AttackState : IState
 {
-    private Player player;
+	private Player _player;
 
-    public AttackState(Player player)
-    {
-        this.player = player;
-    }
+	public AttackState(Player player)
+	{
+		this._player = player;
+	}
 
-    public void OnEnter()
-    {
-        player._curWeopon.CanNormalAttack();
-    }
+	public void OnEnter()
+	{
+		if (_player.isLeftMouseClick)
+		{
+			_player._curWeopon.CanNormalAttack();
+		}
+		else if (_player.isRightMouseClick)
+		{
+			_player._curWeopon.CanSkillAttack();
+		}
+	}
 
-    public void OnUpdate()
-    {
-        if (player._curWeopon.isAttack == false)
-        {
-            player.playerStateMachine.TransitionTo(player.playerStateMachine.idleState);
-        }
-        //Move
-        //if (player.playerMovement.inputDir.magnitude >= 0.1f)
-        //{
-        //    player.playerStateMachine.TransitionTo(player.playerStateMachine.walkState);
-        //}
-        ////Idle
-        //else if (player.playerMovement.inputDir.magnitude < 0.1f)
-        //{
-        //    player.playerStateMachine.TransitionTo(player.playerStateMachine.idleState);
-        //}
-    }
+	public void OnUpdate()
+	{
+		if (_player._curWeopon.isAttack == false)
+		{
+			_player.playerStateMachine.TransitionTo(_player.playerStateMachine.idleState);
+		}
+	}
 
-    public void OnExit()
-    {
+	public void OnExit()
+	{
 
-    }
+	}
 
 }
